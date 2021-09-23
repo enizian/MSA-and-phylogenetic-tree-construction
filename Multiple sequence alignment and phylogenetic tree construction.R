@@ -49,6 +49,8 @@ filtered.blastn = filtered.blastn %>%
   filter(rank(dplyr::desc(alignment.length), ties.method = "first")==1) %>% 
   filter(alignment.length >= 5000)
 
+system("time mafft --maxiterate 100 --thread 2 --reorder --op 0.5 selected_viral_seqs_195.fa  > mafft_maxiter100_195_op.5.fa")
+             
 library(Biostrings)
 ncbi.seqs <- readDNAStringSet("ncbi_virus_110119_2.txt")
 selected.seqs = ncbi.seqs[names(ncbi.seqs) %in% filtered.blastn$subject.title]
@@ -79,3 +81,5 @@ newnames = names(alignment) %>%
   pull(newname)
 names(alignment) = newnames
 alignment %>% writeXStringSet(outpath)
+
+system("FastTree -nt -gtr -gamma -out mafft_maxiter100_195_op.5_trimmed.fasttree.tre mafft_maxiter100_195_op.5_trimmed_75pct.fa")
